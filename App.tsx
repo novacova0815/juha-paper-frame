@@ -86,7 +86,9 @@ const App: React.FC = () => {
     setError(null);
 
     try {
-      await document.fonts.load('bold 48px "Gowun Dodum"');
+      // The 'Gowun Dodum' font doesn't have a separate bold weight.
+      // Requesting 'bold' can cause rendering issues on mobile canvas.
+      await document.fonts.load('48px "Gowun Dodum"');
       await document.fonts.load('32px "Gowun Dodum"');
       await document.fonts.load('20px "Gowun Dodum"');
 
@@ -132,12 +134,13 @@ const App: React.FC = () => {
 
         const titleY = subtitleY + (60 * scale);
         ctx.fillStyle = colorMap[titleColor];
-        ctx.font = `bold ${48 * scale}px "Gowun Dodum"`;
+        // Do not use 'bold' as the font doesn't support it, which causes issues on mobile canvas.
+        ctx.font = `${48 * scale}px "Gowun Dodum"`;
         ctx.fillText(title, outputSize / 2, titleY);
 
-        ctx.textAlign = 'right';
-        const copyrightY = outputSize - (30 * scale);
-        const copyrightX = outputSize - padding;
+        ctx.textAlign = 'center';
+        const copyrightY = outputSize - (25 * scale);
+        const copyrightX = outputSize / 2;
         ctx.fillStyle = '#999999';
         ctx.font = `${20 * scale}px "Gowun Dodum"`;
         ctx.fillText('COPYRIGHT © 우리집도서관', copyrightX, copyrightY);

@@ -36,14 +36,14 @@ export const PolaroidFrame: React.FC<PolaroidFrameProps> = ({ image, title, subt
       </div>
       <div className="flex-grow pt-4 text-center flex flex-col justify-between">
         <div>
-           <p className="inline-block text-sm bg-yellow-200 text-yellow-800 px-3 py-1 rounded-md mb-2">
+           <p className="inline-block text-xs sm:text-sm bg-yellow-200 text-yellow-800 px-2 sm:px-3 py-1 rounded-md mb-1 sm:mb-2">
             {subtitle}
           </p>
-          <h2 className={`text-3xl font-bold ${colorClassMap[titleColor]}`} style={{ fontFamily: "'Gowun Dodum', sans-serif" }}>
+          <h2 className={`text-2xl sm:text-3xl font-bold break-words ${colorClassMap[titleColor]}`} style={{ fontFamily: "'Gowun Dodum', sans-serif" }}>
             {title}
           </h2>
         </div>
-        <div className="text-right text-xs text-gray-400 pb-1 pr-1">
+        <div className="text-center text-xs text-gray-400">
           COPYRIGHT © 우리집도서관
         </div>
       </div>
