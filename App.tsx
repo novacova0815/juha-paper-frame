@@ -88,9 +88,9 @@ const App: React.FC = () => {
     try {
       // The 'Gowun Dodum' font doesn't have a separate bold weight.
       // Requesting 'bold' can cause rendering issues on mobile canvas.
-      await document.fonts.load('48px "Gowun Dodum"');
-      await document.fonts.load('32px "Gowun Dodum"');
-      await document.fonts.load('20px "Gowun Dodum"');
+      await document.fonts.load('62px "Gowun Dodum"'); // Title
+      await document.fonts.load('48px "Gowun Dodum"'); // Subtitle
+      await document.fonts.load('20px "Gowun Dodum"'); // Copyright
 
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -109,7 +109,7 @@ const App: React.FC = () => {
       canvas.width = outputSize;
       canvas.height = outputSize;
 
-      ctx.fillStyle = '#fdfcfc';
+      ctx.fillStyle = '#fffbeb'; // Ivory color (amber-50)
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const img = new Image();
@@ -120,28 +120,35 @@ const App: React.FC = () => {
         const imageWidth = outputSize - (padding * 2);
         const imageHeight = imageWidth * (3 / 4);
         
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+        ctx.shadowBlur = 8 * scale;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 4 * scale;
         ctx.drawImage(img, padding, padding, imageWidth, imageHeight);
+        ctx.restore();
 
         const textStartY = padding + imageHeight;
         const remainingSpace = outputSize - textStartY;
 
         ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
         
         const subtitleY = textStartY + remainingSpace * 0.35;
         ctx.fillStyle = '#333333';
-        ctx.font = `${32 * scale}px "Gowun Dodum"`;
+        ctx.font = `${48 * scale}px "Gowun Dodum"`;
         ctx.fillText(subtitle, outputSize / 2, subtitleY);
 
-        const titleY = subtitleY + (60 * scale);
+        const copyrightY = outputSize - (25 * scale);
+        const titleY = subtitleY + (copyrightY - subtitleY) / 2;
+        
         ctx.fillStyle = colorMap[titleColor];
         // Do not use 'bold' as the font doesn't support it, which causes issues on mobile canvas.
-        ctx.font = `${48 * scale}px "Gowun Dodum"`;
+        ctx.font = `${62 * scale}px "Gowun Dodum"`;
         ctx.fillText(title, outputSize / 2, titleY);
-
-        ctx.textAlign = 'center';
-        const copyrightY = outputSize - (25 * scale);
+        
         const copyrightX = outputSize / 2;
-        ctx.fillStyle = '#999999';
+        ctx.fillStyle = '#6b7280'; // Darker gray (gray-500)
         ctx.font = `${20 * scale}px "Gowun Dodum"`;
         ctx.fillText('COPYRIGHT © 우리집도서관', copyrightX, copyrightY);
 

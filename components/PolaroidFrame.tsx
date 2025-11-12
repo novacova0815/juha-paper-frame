@@ -19,9 +19,9 @@ const colorClassMap: Record<TitleColor, string> = {
 
 export const PolaroidFrame: React.FC<PolaroidFrameProps> = ({ image, title, subtitle, titleColor }) => {
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4 w-full max-w-md mx-auto transform hover:scale-105 transition-transform duration-300 aspect-square flex flex-col">
+    <div className="bg-amber-50 rounded-lg shadow-2xl border border-gray-200 p-4 w-full max-w-md mx-auto transform hover:scale-105 transition-transform duration-300 aspect-square flex flex-col">
       <div 
-        className="bg-gray-100 border-2 border-gray-200 flex items-center justify-center w-full aspect-[4/3] relative"
+        className="bg-gray-100 border-2 border-gray-200 flex items-center justify-center w-full aspect-[4/3] relative shadow-md"
         role="img"
         aria-label="Image preview area"
       >
@@ -36,14 +36,14 @@ export const PolaroidFrame: React.FC<PolaroidFrameProps> = ({ image, title, subt
       </div>
       <div className="flex-grow pt-4 text-center flex flex-col justify-between">
         <div>
-           <p className="inline-block text-xs sm:text-sm bg-yellow-200 text-yellow-800 px-2 sm:px-3 py-1 rounded-md mb-1 sm:mb-2">
+           <p className="inline-block text-lg sm:text-xl bg-yellow-200 text-yellow-800 px-3 sm:px-4 py-1 rounded-md mb-2 sm:mb-3">
             {subtitle}
           </p>
-          <h2 className={`text-2xl sm:text-3xl font-bold break-words ${colorClassMap[titleColor]}`} style={{ fontFamily: "'Gowun Dodum', sans-serif" }}>
+          <h2 className={`text-3xl sm:text-4xl font-bold break-words ${colorClassMap[titleColor]}`} style={{ fontFamily: "'Gowun Dodum', sans-serif" }}>
             {title}
           </h2>
         </div>
-        <div className="text-center text-xs text-gray-400">
+        <div className="text-center text-xs text-gray-500">
           COPYRIGHT © 우리집도서관
         </div>
       </div>
