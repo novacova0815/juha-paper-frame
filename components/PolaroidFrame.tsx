@@ -19,9 +19,18 @@ const colorClassMap: Record<TitleColor, string> = {
 
 export const PolaroidFrame: React.FC<PolaroidFrameProps> = ({ image, title, subtitle, titleColor }) => {
   return (
-    <div className="bg-amber-50 rounded-lg shadow-2xl border border-gray-200 p-4 w-full max-w-md mx-auto transform hover:scale-105 transition-transform duration-300 aspect-square flex flex-col">
+    <div className="bg-amber-50 rounded-lg shadow-xl border border-gray-300 w-full max-w-md mx-auto transform hover:scale-105 transition-transform duration-300 aspect-square relative overflow-hidden">
+      
+      {/* Image Container: Mimics the padding and shadow from the canvas output */}
       <div 
-        className="bg-gray-100 border-2 border-gray-200 flex items-center justify-center w-full aspect-[4/3] relative shadow-md"
+        className="absolute bg-gray-100 flex items-center justify-center"
+        style={{
+            top: '5%', // 60px on 1200px canvas
+            left: '5%',
+            width: '90%', // 1080px on 1200px canvas
+            height: '67.5%', // 810px on 1200px canvas (4:3 aspect ratio of 1080px)
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+        }}
         role="img"
         aria-label="Image preview area"
       >
@@ -34,16 +43,24 @@ export const PolaroidFrame: React.FC<PolaroidFrameProps> = ({ image, title, subt
           </div>
         )}
       </div>
-      <div className="flex-grow pt-4 text-center flex flex-col justify-between">
-        <div>
-           <p className="inline-block text-lg sm:text-xl bg-yellow-200 text-yellow-800 px-3 sm:px-4 py-1 rounded-md mb-2 sm:mb-3">
+
+      {/* Text Area: Fills the space below the image */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 flex flex-col text-center"
+        style={{ top: '72.5%' /* 5% top padding + 67.5% image height */ }}
+      >
+        {/* Main text content (subtitle & title), centered in the available space */}
+        <div className="flex-grow flex flex-col justify-center items-center px-4">
+          <p className="text-xl sm:text-2xl" style={{ color: '#333' }}>
             {subtitle}
           </p>
-          <h2 className={`text-3xl sm:text-4xl font-bold break-words ${colorClassMap[titleColor]}`} style={{ fontFamily: "'Gowun Dodum', sans-serif" }}>
+          <h2 className={`text-3xl sm:text-4xl mt-2 break-words ${colorClassMap[titleColor]}`} style={{ fontFamily: "'Gowun Dodum', sans-serif" }}>
             {title}
           </h2>
         </div>
-        <div className="text-center text-xs text-gray-500">
+        
+        {/* Copyright, aligned to the bottom */}
+        <div className="text-center text-xs text-gray-500 pb-2 sm:pb-3">
           COPYRIGHT © 우리집도서관
         </div>
       </div>

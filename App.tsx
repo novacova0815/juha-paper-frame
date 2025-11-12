@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, ChangeEvent, useRef } from 'react';
 import { PolaroidFrame } from './components/PolaroidFrame';
 import { ControlsPanel } from './components/ControlsPanel';
@@ -12,7 +13,7 @@ const App: React.FC = () => {
   const [outputFormat, setOutputFormat] = useState<OutputFormat>('webp');
   const [fileName, setFileName] = useState('우리집_도서관');
   const [isFileNameManuallyEdited, setIsFileNameManuallyEdited] = useState(false);
-  const [titleColor, setTitleColor] = useState<TitleColor>('orange');
+  const [titleColor, setTitleColor] = useState<TitleColor>('pink');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -86,71 +87,86 @@ const App: React.FC = () => {
     setError(null);
 
     try {
-      // The 'Gowun Dodum' font doesn't have a separate bold weight.
-      // Requesting 'bold' can cause rendering issues on mobile canvas.
-      await document.fonts.load('62px "Gowun Dodum"'); // Title
-      await document.fonts.load('48px "Gowun Dodum"'); // Subtitle
-      await document.fonts.load('20px "Gowun Dodum"'); // Copyright
+      await document.fonts.load('62px "Gowun Dodum"');
+      await document.fonts.load('48px "Gowun Dodum"');
+      await document.fonts.load('20px "Gowun Dodum"');
 
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       if (!ctx) throw new Error('Could not get canvas context');
 
       const colorMap: Record<TitleColor, string> = {
-        orange: '#f97316', // orange-500
-        brown: '#78350f',  // amber-800
-        navy: '#1e3a8a',   // blue-900
-        pink: '#db2777',   // pink-600
-        black: '#1f2937',  // gray-800
+        orange: '#f97316',
+        brown: '#78350f',
+        navy: '#1e3a8a',
+        pink: '#db2777',
+        black: '#1f2937',
       };
 
       const scale = outputSize / 1200;
-      
       canvas.width = outputSize;
       canvas.height = outputSize;
 
-      ctx.fillStyle = '#fffbeb'; // Ivory color (amber-50)
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      if (outputFormat === 'jpeg' || outputFormat === 'webp') {
+        ctx.fillStyle = '#f9fafb';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      
+      const shadowPadding = 30 * scale;
+      const frameSize = outputSize - (shadowPadding * 2);
+      const frameX = shadowPadding;
+      const frameY = shadowPadding;
+
+      ctx.save();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+      ctx.shadowBlur = 15 * scale;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 10 * scale;
+      
+      ctx.fillStyle = '#fffbeb';
+      ctx.fillRect(frameX, frameY, frameSize, frameSize);
+      ctx.restore();
+
+      const contentScale = frameSize / 1200;
 
       const img = new Image();
       img.src = image;
 
       img.onload = () => {
-        const padding = 60 * scale;
-        const imageWidth = outputSize - (padding * 2);
+        const padding = 60 * contentScale;
+        const imageWidth = frameSize - (padding * 2);
         const imageHeight = imageWidth * (3 / 4);
         
         ctx.save();
         ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
-        ctx.shadowBlur = 8 * scale;
+        ctx.shadowBlur = 8 * contentScale;
         ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 4 * scale;
-        ctx.drawImage(img, padding, padding, imageWidth, imageHeight);
+        ctx.shadowOffsetY = 4 * contentScale;
+        ctx.drawImage(img, frameX + padding, frameY + padding, imageWidth, imageHeight);
         ctx.restore();
 
         const textStartY = padding + imageHeight;
-        const remainingSpace = outputSize - textStartY;
+        const remainingSpace = frameSize - textStartY;
 
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
         const subtitleY = textStartY + remainingSpace * 0.35;
         ctx.fillStyle = '#333333';
-        ctx.font = `${48 * scale}px "Gowun Dodum"`;
-        ctx.fillText(subtitle, outputSize / 2, subtitleY);
+        ctx.font = `${48 * contentScale}px "Gowun Dodum"`;
+        ctx.fillText(subtitle, frameX + frameSize / 2, frameY + subtitleY);
 
-        const copyrightY = outputSize - (25 * scale);
+        const copyrightY = frameSize - (25 * contentScale);
         const titleY = subtitleY + (copyrightY - subtitleY) / 2;
         
         ctx.fillStyle = colorMap[titleColor];
-        // Do not use 'bold' as the font doesn't support it, which causes issues on mobile canvas.
-        ctx.font = `${62 * scale}px "Gowun Dodum"`;
-        ctx.fillText(title, outputSize / 2, titleY);
+        ctx.font = `${62 * contentScale}px "Gowun Dodum"`;
+        ctx.fillText(title, frameX + frameSize / 2, frameY + titleY);
         
-        const copyrightX = outputSize / 2;
-        ctx.fillStyle = '#6b7280'; // Darker gray (gray-500)
-        ctx.font = `${20 * scale}px "Gowun Dodum"`;
-        ctx.fillText('COPYRIGHT © 우리집도서관', copyrightX, copyrightY);
+        const copyrightX = frameSize / 2;
+        ctx.fillStyle = '#6b7280';
+        ctx.font = `${20 * contentScale}px "Gowun Dodum"`;
+        ctx.fillText('COPYRIGHT © 우리집도서관', frameX + copyrightX, frameY + copyrightY);
 
         const dataUrl = canvas.toDataURL(`image/${outputFormat}`, outputFormat === 'jpeg' ? 0.92 : undefined);
         const link = document.createElement('a');
